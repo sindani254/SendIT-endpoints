@@ -1,9 +1,10 @@
+from flask import Flask
 from copy import deepcopy
 import unittest
 import json
 
-import app
-import models
+from app import app
+from app.api.v1 import models
 
 BASE_URL = "http://127.0.0.1:5000/api/v1/parcels"
 BAD_ITEM_URL = '{}/5'.format(BASE_URL)
@@ -12,9 +13,13 @@ GOOD_ITEM_URL = '{}/2'.format(BASE_URL)
 
 class TestConfig(unittest.TestCase):
 
+    def create_app(self):
+        app.config.from_object("instance.config.TestConfig")
+        return app
+
     def setUp(self):
         self.backup_order = deepcopy(models.parcels)
-        self.app = app.app.test_client()
+        self.app = app.test_client()
         self.app.testing = True
 
     def test_index(self):
